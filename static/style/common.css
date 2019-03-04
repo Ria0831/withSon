@@ -1,0 +1,50 @@
+@charset "utf-8"; 
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, pre, 
+dl, dt, dd, ul, ol, li, th, td, div, span, img{margin: 0;padding: 0;} 
+/* color & background */ 
+html{color:#000; background:#FFF;} 
+/* font */ 
+body, button, input, select, textarea { /* for ie */ 
+font: 12px/18px Arial, Verdana, Microsoft YaHei; 
+} 
+/* fix center */ 
+html,body {height:100%;margin: 0 auto;} 
+/* h1~h6 */ 
+h1 {font-size: 18px;} 
+h2 {font-size: 16px;} 
+h3 {font-size: 14px;} 
+h4, h5, h6 {font-size: 100%;} 
+/* a */ 
+a { text-decoration: none; } 
+a:hover{cursor: pointer;}
+/* list */ 
+ul,ol {list-style: none;} 
+/* img border */ 
+fieldset,img{border: 0} 
+/* table */ 
+table {border-collapse: collapse;border-spacing: 0;font:inherit;} 
+/* margin */ 
+.alpha {margin-left: 0;} 
+.omega {margin-right: 0;} 
+/* float & clear */ 
+.left{float:left;} 
+.right{float:right;} 
+.clear {clear: both;display: block;} 
+/* clearfix */ 
+.clearfix:after{content:".";display:block;} 
+.clearfix{display:inline-table;} 
+/* Hides from IE-mac */ 
+* html .clearfix{height:1%;} 
+.clearfix{display:block;} 
+/* End hide from IE-mac */ 
+*+html .clearfix{min-height:1%;}/* IE7 */ 
+
+/*elementui的css*/
+.el-input.is-active .el-input__inner, .el-input__inner:focus{
+	border-color:#228B22 !important;
+}
+.el-button:focus, .el-button:hover{
+	border-color:#228B22 !important;
+	background: #fff !important;
+	color:#228B22 !important;
+}
