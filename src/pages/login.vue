@@ -2,7 +2,7 @@
 	<div id='login'>
 		<div class='login-bg'></div>
 		<div class='login-main'>
-			<div class='main-box' v-if='isLogin'>
+			<div class='main-box' v-if='isLogin' :class="[currentLoginType == '账号登陆' ? 'height323' : 'height250']">
 				<div class='main-top'>
 					<p class='top-left' >{{currentLoginType}}</p>
 					<span class='top-right' @click='changeType'>
@@ -11,13 +11,12 @@
 					</span>
 				</div>
 				<div class='main-content'>
-					<div v-if='currentLoginType == "账号登陆"'>
+					<div v-if='currentLoginType == "账号登陆"' >
 						<div class='login-input'>
 							<i class='iconfont icon-yonghu login-icon'></i>
 							<el-input placeholder='用户名' style='width: 100%;' v-model='phone'></el-input>
 							<p class='login-tips'>{{phoneTips}}</p>
 						</div>
-						
 						<div class='login-input'>
 							<i class='iconfont icon-mima login-icon'></i>
 							<el-input type='password' placeholder='密码' style='width: 100%;' v-model='temppassword'></el-input>
@@ -61,16 +60,26 @@
 					</div>
 				</div>
 			</div>
-			<div class='main-box' id='fogive-box' v-else>
+			<div class='main-box' v-else :class="[isfindByEmail? 'height200' : 'height250']">
 				<div class='main-top'>
 					<p class='top-left'>忘记密码</p>
 				</div>
 				<div class='main-content'>
-					<div class='login-input' v-if='isfindByEmail'>
+					<div class='login-input' v-if='isfindByEmail == true' >
 						<el-input placeholder='请输入绑定的邮箱号' v-model='emailByForgive'></el-input>
 						<p class='login-tips'>{{emailTips}}</p>
 					</div>
-					<div v-else>
+					<div  v-if='isfindByEmail == false'>
+						<div class='login-input'>
+							<el-input placeholder='请输入绑定的手机号' v-model='phoneByForgive'></el-input>
+							<p class='login-tips'>{{fogivephoneTips}}</p>
+						</div>
+						<div class='login-input'>
+							<i class='iconfont icon-mima login-icon'></i>
+							<el-input placeholder='动态密码'></el-input>
+							<el-button class='getMsgBtn' @click='toGetCheckWord' :disabled='MsgBtnDisable' v-model='dynamicWord'>{{getConfimTips}}</el-button>
+							<p class='login-tips'>{{passwordTips}}</p>
+						</div>
 						
 					</div>
 				</div>
@@ -79,7 +88,7 @@
 						<el-button class='login-btn' @click='tofindPassword'>确定</el-button>
 					</div>
 					<span class='registerBtn leftSpan' @click='tologinPage'><返回登陆</span>
-					<span class='registerBtn' @click='findByPhone'>？手机找回</span>
+					<span class='registerBtn' @click='findByPhone(isfindByEmail)'>？{{findAnotherWay}}</span>
 					
 				</div>
 			</div>
@@ -108,8 +117,11 @@
 				MsgBtnDisable:false,
 				isLogin:true,
 				emailByForgive:'',//忘记的邮箱号
+				phoneByForgive:'',
 				emailTips:'',//忘记密码里的邮箱提示
+				fogivephoneTips:'',
 				isfindByEmail:true,
+				findAnotherWay:'手机找回',
 			}
 		},
 		watch:{
@@ -158,8 +170,9 @@
 				
 			},
 			//通过手机找回密码
-			findByPhone(){
-				this.isfindByEmail = false;
+			findByPhone(val){
+				this.isfindByEmail = !val;
+				this.findAnotherWay = this.isfindByEmail === false ?  '邮箱找回' : '手机找回'
 			},
 			//从忘记密码页转到登陆页
 			tologinPage(){
@@ -246,9 +259,9 @@
 			display: flex;
 			justify-content:flex-end;
 			align-items:center;
-			#fogive-box{
-				height: 200px;
-			}
+			.height200{height: 200px !important};
+			.height250{height: 250px !important};
+			.height323{height: 323px !important};
 			.main-box{
 				width: 35%;
 				min-width: 300px;
