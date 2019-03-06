@@ -2,6 +2,7 @@
 	<div class='sideMenu'>
 		<el-row class='menu-top'>
 			<img src="../../static/img/wigui01.png" alt="logo">
+			<span class='top-title' v-if='foldStat == true'>鳖总来玩鸭</span>
 		</el-row>
 		<el-row>
 			<el-menu
@@ -44,6 +45,9 @@
 <script>
 	export default{
 		name:'sideMenu',
+		props:{
+			foldStat:Boolean,
+		},
 		data(){
 			return {
 				clientHight:'',
@@ -79,6 +83,11 @@
 				border:1px solid #FFB90F;
     			background-color: #FFB90F;
     			border-radius: 50%;
+    		}
+    		.top-title{
+    			color:#37CC86;
+    			font-size: 18px;
+    			margin-left: 10px;
     		}
 		}
 		

@@ -33,7 +33,7 @@
 			//折叠菜单按钮
 			toFold(val){
 				this.isFold = !val;
-				
+				this.$emit('toFold',this.isFold);
 			},
 			//登出方法
 			tologOut(){
@@ -49,8 +49,12 @@
 		}
 	}
 </script>
-<style lang='scss' scoped="scoped">
-/*清除浮动代码*/
+<style lang='scss'>
+	.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover{
+			background-color:rgba(102,205,0,0.4);
+			color:#fff;
+		}
+	/*清除浮动代码*/
    .clearfloat:after{display:block;clear:both;content:"";visibility:hidden;height:0}
    .clearfloat{zoom:1}
 	#topBar{
@@ -78,5 +82,6 @@
 			}
 		}
 		.icon-my-shouqi{color:#008F53;font-size: 23px;}
+		
 	}
 </style>

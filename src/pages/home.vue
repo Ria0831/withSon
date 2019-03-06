@@ -1,14 +1,13 @@
 <template>
 	<el-row id='home' ref='home'>
-		<el-col :span='4'  >
-			<side-menu></side-menu>
+		<el-col :span='isFold == true ? 4 : 2'  >
+			<side-menu :foldStat='isFold'></side-menu>
 		</el-col>
-		<el-col :span='20' style='{background:blue;}'>
+		<el-col :span='isFold == true ? 20 : 22' style='{background:blue;}'>
 			<el-row>
-				<top-bar></top-bar>
+				<top-bar v-on:toFold='toFoldMenu'></top-bar>
 			</el-row>
 			<el-row>
-				<!-- <el-button @click='goOut'>登出</el-button> -->
 				<div class='main-content'>
 					<!-- 模板渲染入口 -->
 					<transition name='move' mode='out-in'>
@@ -27,10 +26,19 @@
 		components:{
 			sideMenu,topBar
 		},
+		data(){
+			return{
+				isFold:false,
+			}
+		},
 		mounted(){
 			this.try();
 		},
 		methods:{
+			//折叠菜单栏
+			toFoldMenu(val){
+				this.isFold = val;
+			},
 			try(){
 				this.$axios.get('/user/userList',{headers:{
              	 	'token': sessionStorage.getItem('token')
