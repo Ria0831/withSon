@@ -4,8 +4,8 @@
 		<div class='reset-main'>
 			<div class='reset-box'>
 				<div class='reset-input'>
-					<label>邮箱</label>
-					<el-input   :disabled='true' v-model='email'></el-input>
+					<label>{{resetType}}</label>
+					<el-input :disabled='true' v-model='email'></el-input>
 				</div>
 				<div class='reset-input'>
 					<label for="newPassword">新密码</label>
@@ -38,10 +38,27 @@
 				sid:'',
 				email:"",
 				linkIsAvalible:true,
+				resetType:'邮箱',
+				isByEmail:true,
 			}
 		},
+		beforeRouteEnter(to,from,next){
+			next(vm=>{
+				console.log(vm.$route.query)
+				if(vm.$route.query.flag == 'byPhone'){
+					vm.resetType = '手机号';
+					vm.isByEmail = false;
+					vm.email = vm.$route.query.num;
+				}
+			})
+		},
 		mounted(){
-			this.getParams();
+			if(!this.isByEmail){
+				this.getParams();
+			}else{
+				this.linkIsAvalible = false;
+			}
+			
 		},
 		watch:{
 			confirmPassword(val,oldval){
@@ -102,16 +119,31 @@
 			},
 			//确定修改密码
 			resetSure(){
-				this.$axios.post('/user/mailUpdatePassword',{sid:this.sid,email:this.email,password:this.confirmPassword})
-					.then(response =>{
-						console.log(response);
-						if(response.data.status === 'success'){
-							this.$message.success(response.data.data);
-							this.$router.push('/');
-						}else{
-							this.$message.error(response.data.data.errMsg);
-						}
+				if(this.isByEmail){
+					this.$axios.post('/user/mailUpdatePassword',{sid:this.sid,email:this.email,password:this.confirmPassword})
+						.then(response =>{
+							console.log(response);
+							if(response.data.status === 'success'){
+								this.$message.success(response.data.data);
+								this.$router.push('/');
+							}else{
+								this.$message.error(response.data.data.errMsg);
+							}
 					})
+				}else{
+					var otpcode = sessionStorage.getItem('otpCode');
+					this.$axios.post('/user/telephonePasswordReminderCheck',{'telephone':this.email,'otpCode':otpcode,'password':this.confirmPassword})
+						.then(response=>{
+							console.log(response);
+							if(response.data.status === 'success'){
+								this.$message.success(response.data.data);
+								this.$router.push('/');
+							}else{
+								this.$message.error(response.data.data);
+							}
+						})
+				}
+				
 			}
 		}
 	}

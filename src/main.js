@@ -12,7 +12,7 @@ import md5 from 'js-md5';
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$md5 = md5;
-axios.defaults.baseURL = 'http://192.168.1.4:8090/';
+axios.defaults.baseURL = 'http://192.168.1.8:8090/';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.withCredentials=true;
 Vue.prototype.qs = qs;

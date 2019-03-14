@@ -71,14 +71,15 @@
 					</div>
 					<div  v-if='isfindByEmail == false'>
 						<div class='login-input'>
+							<i class='iconfont icon-shoujihao login-icon'></i>
 							<el-input placeholder='请输入绑定的手机号' v-model='phoneByForgive'></el-input>
 							<p class='login-tips'>{{fogivephoneTips}}</p>
 						</div>
 						<div class='login-input'>
 							<i class='iconfont icon-mima login-icon'></i>
-							<el-input placeholder='动态密码'></el-input>
-							<el-button class='getMsgBtn' @click='toGetCheckWord' :disabled='MsgBtnDisable' v-model='dynamicWord'>{{getConfimTips}}</el-button>
-							<p class='login-tips'>{{passwordTips}}</p>
+							<el-input placeholder='动态密码' v-model='dynamicWordByFogive'></el-input>
+							<el-button class='getMsgBtn' @click='toGetCheckWord("forget")' :disabled='MsgBtnDisable' >{{getConfimTips}}</el-button>
+							<p class='login-tips'>{{fogivephonewordTips}}</p>
 						</div>
 						
 					</div>
@@ -122,6 +123,8 @@
 				fogivephoneTips:'',
 				isfindByEmail:true,
 				findAnotherWay:'手机找回',
+				dynamicWordByFogive:'',
+				fogivephonewordTips:'',//手机号找回密码的错误提示
 			}
 		},
 		watch:{
@@ -150,23 +153,39 @@
 		methods:{
 			//找回密码
 			tofindPassword(){
-				var reg= /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
-				if(this.emailByForgive === '' || this.emailByForgive === undefined){
-					this.emailTips ='邮箱地址不能为空哦'
-				}else if(!reg.test(this.emailByForgive)){
-					this.emailTips ='邮箱格式不对哦'
+				if(this.isfindByEmail){
+					//如果是通过邮箱找回
+					var reg= /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
+					if(this.emailByForgive === '' || this.emailByForgive === undefined){
+						this.emailTips ='邮箱地址不能为空哦'
+					}else if(!reg.test(this.emailByForgive)){
+						this.emailTips ='邮箱格式不对哦'
+					}else{
+						this.emailTips = '';
+						this.$axios.post('/user/mailPasswordReminderSend',{emailAdd:this.emailByForgive})
+						.then(response =>{
+							console.log(response);
+							if(response.data.status === 'success'){
+								this.emailTips = response.data.data;
+							}else{
+								this.emailTips = response.data.data.errMsg;
+							}
+						})
+					}
 				}else{
-					this.emailTips = '';
-					this.$axios.post('/user/mailPasswordReminderSend',{emailAdd:this.emailByForgive})
-					.then(response =>{
-						console.log(response);
-						if(response.data.status === 'success'){
-							this.emailTips = response.data.data;
-						}else{
-
-						}
+					//通过手机号找回
+					console.log(this.dynamicWordByFogive)
+					this.$axios.post('user/telephoneCodeCheck',{'telephone':this.phoneByForgive,'otpCode':this.dynamicWordByFogive}).then(response =>{
+							console.log(response);
+							if(response.data.status === 'success'){
+								this.$router.push({path:'/resetPassword',query:{flag:"byPhone",'num':this.phoneByForgive}});
+								sessionStorage.setItem('otpCode',this.dynamicWordByFogive);
+							}else{
+								this.fogivephonewordTips = response.data.data.errMsg;
+							}
 					})
 				}
+				
 				
 			},
 			//通过手机找回密码
@@ -201,9 +220,20 @@
 				}
 			},
 			//获取动态校验码
-			toGetCheckWord(){
+			toGetCheckWord(type){
 				this.timeCount1s(10);
 				this.MsgBtnDisable = true;
+				var methods = type == 'forget' ? '/user/telephonePasswordReminderSend' :'';
+				this.$axios.post(methods,{'telephone':this.phoneByForgive})
+					.then(response =>{
+						console.log(response)
+						if(response.data.status === 'success'){
+							this.fogivephonewordTips = response.data.data;
+
+						}else{
+							this.fogivephonewordTips = response.data.data.errMsg;
+						}
+					})
 			},
 			//登陆方式切换
 			changeType(){

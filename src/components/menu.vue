@@ -70,6 +70,9 @@
 		.el-submenu .el-menu-item{
 			min-width: 0;
 		}
+		.el-submenu__title,.el-menu-item{
+			padding-left: 0 !important;
+		}
 		.menu-top{
 			height: 50px;
 			background: #545c64;
