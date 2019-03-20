@@ -7,8 +7,9 @@
 			<el-row>
 				<top-bar v-on:toFold='toFoldMenu'></top-bar>
 			</el-row>
-			<el-row>
+			<el-row style='height: calc(100% - 52px)'>
 				<div class='main-content'>
+				    <my-tab></my-tab>
 					<!-- 模板渲染入口 -->
 					<transition name='move' mode='out-in'>
 						<router-view></router-view>
@@ -21,10 +22,11 @@
 <script>
 	import sideMenu from '../components/menu.vue'
 	import topBar from '../components/topBar.vue'
+	import myTab from '../components/myTab.vue'
 	export default{
 		name:'home',
 		components:{
-			sideMenu,topBar
+			sideMenu,topBar,myTab
 		},
 		data(){
 			return{

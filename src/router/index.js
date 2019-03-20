@@ -31,11 +31,7 @@ export default new Router({
       name: 'tagManage',
       component: ()=>import('@/pages/tagManage.vue'),
     },
-    {
-      path: '/a',
-      name: 'a',
-      component: ()=>import('@/pages/ele-tabs.vue'),
-    },
+    
 
     
 ]
