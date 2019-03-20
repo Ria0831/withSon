@@ -58,7 +58,7 @@
 			},
 			//去个人设置页面
 			toPersonIfo(){
-				this.$store.commit("add_tabs",{name:"personIfo",content:"personIfo",flag:2,pathUrl:"/personIfo"})
+				this.$store.commit("add_tabs",{name:"个人设置",content:"personIfo",flag:2,pathUrl:"/personIfo"})
 			}
 		}
 	}

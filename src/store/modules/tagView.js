@@ -20,7 +20,7 @@ const tagsView ={
 			if(temp.length === 0){
 				state.tabsList.push(obj);
 			}
-			state.tabValue = obj.name
+			state.tabValue = obj.content
 			
 		},
 		//删除选项卡
