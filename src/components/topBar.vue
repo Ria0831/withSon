@@ -12,7 +12,7 @@
 		      </span>
 		      <el-dropdown-menu slot="dropdown">
 		        <el-dropdown-item command='logout'>登出</el-dropdown-item>
-		        <el-dropdown-item >个人设置</el-dropdown-item>
+		        <el-dropdown-item command='toPersonIfo'>个人设置</el-dropdown-item>
 		      </el-dropdown-menu>
 		    </el-dropdown>
 		</div>
@@ -37,8 +37,12 @@
 			},
 			//下拉事件的点击方法
 			handleCommand(val){
-				if(val == 'logout'){
-					this.tologOut()
+				// if(val == 'logout'){
+				// 	this.tologOut()
+				// }
+				switch(val){
+					case 'logout':this.tologOut();break;
+					case  'toPersonIfo':this.toPersonIfo();break;
 				}
 			},
 			//登出方法
@@ -51,6 +55,10 @@
 					}
 				})
 
+			},
+			//去个人设置页面
+			toPersonIfo(){
+				this.$store.commit("add_tabs",{name:"personIfo",content:"personIfo",flag:2,pathUrl:"/personIfo"})
 			}
 		}
 	}

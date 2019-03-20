@@ -24,6 +24,7 @@
 <script>
 	import trya from  '../pages/try.vue';
 	import tryAgain from '../pages/tryAgain.vue'
+	import personIfo from '../pages/personIfo.vue'
 	import {mapState,mapGetters} from 'vuex';
 	import html2canvas from 'html2canvas'
 
@@ -35,7 +36,7 @@
 			}
 		},
 		components:{
-			trya,tryAgain
+			trya,tryAgain,personIfo
 		},
 		watch:{
 			tabValue(oldval,newval){

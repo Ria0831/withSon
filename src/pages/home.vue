@@ -67,11 +67,12 @@
 		flex-direction:colomn;
 		.main{
 			width: 90%;
-			.main-content{
-				height: calc(100% - 50px);
-				background:black;
-			}
+
 		}
+		.main-content{
+				height: 100%;
+				background:#fff;
+			}
 
 	}
 </style>
