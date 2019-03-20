@@ -109,6 +109,15 @@
 									this.$refs.slider.style.display = 'none';
 									//保存token
 									sessionStorage.setItem('token',response.data.data.token);
+									var tempParams = response.data.data;
+									var userName = tempParams.userName
+									var userIcon = tempParams.userIcon
+									var token = tempParams.token
+									var role = tempParams.role
+									var userCode = tempParams.userCode
+									var id = tempParams.id
+									 
+									this.$store.commit('setUserMsg',{userName,userIcon,token,role,userCode,id})
 							        //验证成功，传值给父组件
 									if(this.logMsg.phone != '' && this.logMsg.password !=''){
 										this.$emit('tologinFlag',{flag:true});

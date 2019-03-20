@@ -13,7 +13,7 @@ import store from './store'
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$md5 = md5;
-axios.defaults.baseURL = 'http://192.168.1.4:8090/';
+axios.defaults.baseURL = 'http://192.168.1.24:8090/';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.withCredentials=true;
 Vue.prototype.qs = qs;
