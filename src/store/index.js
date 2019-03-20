@@ -8,8 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state:{
 		userMsg:{
-			'userName':'',
-			'userIcon':'',
+			'userName':'鳖鳖小朋友的家长',
+			'userIcon':'../../static/img/userImg.jpg',
 			'token':'',
 			'role':'',
 			'userCode':'',

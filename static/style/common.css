@@ -55,3 +55,7 @@ table {border-collapse: collapse;border-spacing: 0;font:inherit;}
 	background: #fff !important;
 	color:#228B22 !important;
 }
+.el-upload--picture-card:hover, .el-upload:focus{
+	border-color:#228B22 !important;
+	color:#228B22 !important;
+}
