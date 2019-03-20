@@ -24,12 +24,19 @@ export default new Router({
     {
       path: '/home',
       name: 'home',
-      component: ()=>import('@/pages/home.vue')
+      component: ()=>import('@/pages/home.vue'),
     },
     {
-      path: '/try',
-      name: 'try',
-      component: ()=>import('@/pages/try.vue')
+      path: '/tagManage',
+      name: 'tagManage',
+      component: ()=>import('@/pages/tagManage.vue'),
     },
-  ]
+    {
+      path: '/a',
+      name: 'a',
+      component: ()=>import('@/pages/ele-tabs.vue'),
+    },
+
+    
+]
 })

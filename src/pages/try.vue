@@ -1,12 +1,15 @@
 <template>
-	<div id="app1">
-		<div v-drag class="drag"></div>
-		<div v-drag class="drag"></div>
+	<div id="try">
+		<div id="capture" style="padding: 10px; background: #f5da55">
+            <h4 style="color: #000; ">Hello world!</h4>
+        </div>
+        <div id='whya'></div>
 	</div>
 </template>
 <script>
+    import html2canvas from 'html2canvas'
 	export default{
-		name:'try',
+		name:'trya',
 		 // 自定义指令
         directives:{
             drag(el,bindings){
@@ -21,6 +24,17 @@
                         document.onmousemove = document.onmouseup = null;
                     }
                 }
+            }
+        },
+        mounted(){
+            // this.why();
+        },
+        methods:{
+            why(){
+                html2canvas(document.querySelector("#capture")).then(canvas => {
+                    console.log(canvas)
+                    document.querySelector("#whya").appendChild(canvas)
+                });
             }
         }
 	}

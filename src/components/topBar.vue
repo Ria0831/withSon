@@ -5,14 +5,14 @@
 		</div>
 		<div class='top-right'>
 			<div class='user-name'>你好，{{userName}}</div>
-			<el-dropdown>
+			<el-dropdown trigger="click" @command='handleCommand'>
 		      <span class="el-dropdown-link">
 		      	<img src="../../static/img/wigui01.png" alt="用户头像" class='user-img'>
 		        <i class="el-icon-arrow-down el-icon--right"></i>
 		      </span>
 		      <el-dropdown-menu slot="dropdown">
-		        <el-dropdown-item @click='tologOut'>登出</el-dropdown-item>
-		        <el-dropdown-item @click='tologOut'>个人设置</el-dropdown-item>
+		        <el-dropdown-item command='logout'>登出</el-dropdown-item>
+		        <el-dropdown-item >个人设置</el-dropdown-item>
 		      </el-dropdown-menu>
 		    </el-dropdown>
 		</div>
@@ -25,7 +25,7 @@
 		name:'topBar',
 		data(){
 			return{
-				userName:'浩然爸爸',
+				userName:'小鳖鳖',
 				isFold:false,
 			}
 		},
@@ -34,6 +34,12 @@
 			toFold(val){
 				this.isFold = !val;
 				this.$emit('toFold',this.isFold);
+			},
+			//下拉事件的点击方法
+			handleCommand(val){
+				if(val == 'logout'){
+					this.tologOut()
+				}
 			},
 			//登出方法
 			tologOut(){
