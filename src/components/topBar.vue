@@ -4,10 +4,10 @@
 			<i class='icon iconfont icon-zhankaishouqi-copy-copy icon-my-shouqi' @click='toFold(isFold)'></i>
 		</div>
 		<div class='top-right'>
-			<div class='user-name'>你好，{{userName}}</div>
+			<div class='user-name'>你好，{{userMsg.userName}}</div>
 			<el-dropdown trigger="click" @command='handleCommand'>
 		      <span class="el-dropdown-link">
-		      	<img src="../../static/img/wigui01.png" alt="用户头像" class='user-img'>
+		      	<img :src="'http://image.shr.com/'+userMsg.userIcon" alt="用户头像" class='user-img'>
 		        <i class="el-icon-arrow-down el-icon--right"></i>
 		      </span>
 		      <el-dropdown-menu slot="dropdown">
@@ -21,6 +21,7 @@
 	</div>
 </template>
 <script>
+	import {mapState,mapGetters} from 'vuex';
 	export default{
 		name:'topBar',
 		data(){
@@ -28,6 +29,11 @@
 				userName:'小鳖鳖',
 				isFold:false,
 			}
+		},
+		computed:{
+			...mapState({
+				userMsg:state=>state.userMsg
+			})
 		},
 		methods:{
 			//折叠菜单按钮
@@ -88,8 +94,6 @@
 			.user-img{
     			width: 35px;
 				height: 35px;
-				border:1px solid #FFB90F;
-    			background-color: #FFB90F;
     			border-radius: 50%;
     			margin-left:10px;
     			vertical-align: middle;

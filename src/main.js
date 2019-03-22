@@ -10,11 +10,20 @@ import qs from 'qs'
 import md5 from 'js-md5';
 import store from './store'
 
+// const axiosCreate = axios.create({
+// 	headers:{
+// 		token:sessionStorage.getItem('token')
+// 	}
+// })
+
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$md5 = md5;
-axios.defaults.baseURL = 'http://192.168.1.24:8090/';
+axios.defaults.baseURL = 'http://192.168.1.8:8090/';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+if(sessionStorage.getItem('token')){
+	axios.defaults.headers.token = sessionStorage.getItem('token');
+}
 axios.defaults.withCredentials=true;
 Vue.prototype.qs = qs;
 

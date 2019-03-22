@@ -42,9 +42,11 @@
 				this.isFold = val;
 			},
 			try(){
-				this.$axios.get('/user/userList',{headers:{
-             	 	'token': sessionStorage.getItem('token')
-	                }})
+				// this.$axios.get('/user/userList',{headers:{
+    //          	 	'token': sessionStorage.getItem('token')
+	   //              }})
+	   //              
+	          this.$axios.get('/user/userList')
 					.then(response =>{
 					console.log(response);
 				})

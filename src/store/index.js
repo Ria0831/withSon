@@ -2,8 +2,13 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 import tagsView from './modules/tagView'
 import tagsPage from './modules/tabPage'
+import VuexPersistence from 'vuex-persist'  //vuex持久化插件
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+})
 
 export default new Vuex.Store({
 	state:{
@@ -13,7 +18,9 @@ export default new Vuex.Store({
 			'token':'',
 			'role':'',
 			'userCode':'',
-			'id':0
+			'id':0,
+			email:'',
+			telephone:'',
 		}
 		
 
@@ -25,8 +32,9 @@ export default new Vuex.Store({
 		tagsView:tagsView,
 		tagsPage:tagsPage
 	},
+	plugins: [vuexLocal.plugin],
 	mutations:{
-		setUserMsg(state,{userName,userIcon,token,role,userCode,id}){
+		setUserMsg(state,{userName,userIcon,token,role,userCode,id,email,telephone}){
 			var param = state.userMsg;
 			param.userName = userName
 			param.userIcon = userIcon
@@ -34,6 +42,8 @@ export default new Vuex.Store({
 			param.role = role
 			param.userCode = userCode
 			param.id = id
+			param.email = email
+			param.telephone = telephone
 		}
 	}
 })

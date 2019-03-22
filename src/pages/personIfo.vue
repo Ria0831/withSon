@@ -2,9 +2,9 @@
 	<div id='personIfo'>
 		<div class='ifo-top'>
 			<div class='top-left'>
-				<!-- <img :src="'http://image.shr.com/'+userMsg.userIcon" alt="用户头像" class='user-img'> -->
+				<img :src="'http://image.shr.com/'+userMsg.userIcon" alt="用户头像" class='user-img'>
 				<!-- 本地用 -->
-				<img :src="userMsg.userIcon" alt="用户头像" class='user-img'> -->
+				<!-- <img :src="userMsg.userIcon" alt="用户头像" class='user-img'> --> -->
 				<div class='changImg' @click='toChangeImg'>更换头像</div>
 			</div>
 			
@@ -68,6 +68,7 @@
 	    	//更改用户头像
 	    	toChangeImg(){
 	    		this.curPages = 'uploadUserImg'
+	    		this.isCurItem = 0;
 	    	},
 		}  
   }

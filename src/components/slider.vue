@@ -110,11 +110,11 @@
 									//保存token
 									sessionStorage.setItem('token',response.data.data.token);
 									var tempParams = response.data.data;
-									var userName = tempParams.userName
+									var userName = tempParams.name
 									var userIcon = tempParams.userIcon
 									var token = tempParams.token
 									var role = tempParams.role
-									var userCode = tempParams.userCode
+									var userCode = tempParams.usercode
 									var id = tempParams.id
 									 
 									this.$store.commit('setUserMsg',{userName,userIcon,token,role,userCode,id})
