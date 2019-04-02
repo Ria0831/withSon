@@ -102,6 +102,7 @@
 <style lang='scss'>
 	.my-tab{
 		height: 100%;
+		
 		.tab-top{
 			width: 100%;
 			border-bottom: 1px solid #e4e7ed;

@@ -197,6 +197,7 @@
 							this.emailTips = '邮箱格式不正确';
 							flag = false;
 						}
+						break;
 					}
 				};
 				return flag;
@@ -287,7 +288,7 @@
 					}
 					this.passwordTips = '安全系数';
 					this.tipsFlag = falg;
-					}				
+				}				
 			},
 
 			//注册
