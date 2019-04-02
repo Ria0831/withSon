@@ -27,7 +27,7 @@
 	import personIfo from '../pages/personIfo.vue'
 	import {mapState,mapGetters} from 'vuex';
 	import html2canvas from 'html2canvas'
-
+	
 	export default{
 		name:'myTab',
 		data(){
@@ -36,7 +36,7 @@
 			}
 		},
 		components:{
-			trya,tryAgain,personIfo
+			trya,tryAgain,personIfo,
 		},
 		watch:{
 			tabValue(oldval,newval){

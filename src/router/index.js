@@ -31,6 +31,11 @@ export default new Router({
       name: 'tagManage',
       component: ()=>import('@/pages/tagManage.vue'),
     },
+    {
+      path: '/ele',
+      name: 'ele',
+      component: ()=>import('../components/simpleUploadImg.vue'),
+    },
     
 
     

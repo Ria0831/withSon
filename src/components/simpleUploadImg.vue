@@ -2,31 +2,20 @@
 	<div id='uploadUserImg'>
 		<!-- action="http://192.168.1.8:8090/util/uploadImages" -->
 		<div class='upload-img'>
-			
-			  <vue-cropper
-			    	ref='cropper'
-			    	:guides="true"
-			    	:view-mode=2
-			        :auto-crop-area="0.5"
-			        :min-container-width=250
-			        :min-container-height=180
-			        :background=true
-			        :img="imageUrl"
-			        alt="图片预览"
-			        v-if="imageUrl"
-			        class="avatar"></vue-cropper> 
-			  <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-			  <div v-else class='uploadarea'>
-			  	<i  class="el-icon-plus avatar-uploader-icon "></i>
-			  	<input type="file" class='up_input' @change='toChooseImg($event)' accept="image/jpeg,image/jpg,image/png">
-			  </div>
-			  
-			  <div class='handleImg'>
-			  	<i class="icon iconfont icon-xuanzhuan icon-my-xuanzhuan" @click='rotateLeft'></i>
-			  	<i class='icon iconfont icon-youxuanzhuan icon-my-xuanzhuan' @click='rotateRight'></i>
-			  </div>
-			  
-			
+			<el-upload
+			  ref='upload'
+			  class="avatar-uploader"
+			  action=''
+			  :auto-upload='false'
+			  drag
+			  :show-file-list="false"
+			  :on-change="beforeAvatarUpload"
+			  :on-success='handleSuccess'
+			  :limit=1
+			  >
+			  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+			  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload>
 			
 			<!-- <el-upload
 				  class="avatar-uploader"
@@ -78,32 +67,6 @@
 			})
 		},
 		methods:{
-			changeImage(event){
-				console.log(event);
-			},
-			//左旋转
-			rotateLeft(){
-				this.$refs.cropper.rotateLeft();
-			},
-			//右旋转
-			rotateRight(){
-				this.$refs.cropper.rotateRight();
-			},
-			//打开文件选择
-			toChooseImg(e){
-				console.log(e);
-				//获取到当前选择的图片
-				var file = e.target.files[0];
-				if(file){
-					let reader = new FileReader();
-					let that = this;
-                	reader.readAsDataURL(file)
-                	reader.onload= function(e){
-                    // 这里的this 指向reader
-                    // that.avatar = this.result
-                	}
-				}
-			},
 			//上传成功处理
 			handleSuccess(res){
 				var _this = this;
@@ -208,7 +171,6 @@
 			background: #228B22;
 			margin:0 3rem;
 		}
-
 		.avatar-uploader .el-upload {
 		    border: 1px dashed #d9d9d9;
 		    border-radius: 6px;
@@ -219,15 +181,12 @@
 		    border-color: #228B22;
 		}
 		.avatar-uploader-icon {
-		    font-size: 36px;
+		    font-size: 28px;
 		    color: #8c939d;
-		    display: flex;
-		    justify-content: center;
-    		align-items: center;
-		    width: 100%;
-		    height: 100%;
+		    width: 148px;
+		    height: 148px;
+		    line-height: 148px;
 		    text-align: center;
-		    z-index: 1;
 		}
 		.avatar {
 		    width: 148px;
@@ -254,26 +213,6 @@
 		}
 		.icon-my-xuanzhuan{
 			font-size: 30px;
-		}
-		.uploadarea:hover{
-			border-color: #228B22;
-		}
-		.uploadarea{
-			width: 200px;
-			height: 200px;
-			position: relative;
-			border: 1px dashed #d9d9d9;
-    		border-radius: 6px;
-    		box-sizing: border-box;
-			.up_input{
-				position: absolute;
-				top:0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				z-index:9;
-				opacity: 0;
-			}
 		}
 	}
 </style>
