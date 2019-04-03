@@ -2,29 +2,34 @@
 	<div id='uploadUserImg'>
 		<!-- action="http://192.168.1.8:8090/util/uploadImages" -->
 		<div class='upload-img'>
-			
-			  <vue-cropper
-			    	ref='cropper'
-			    	:guides="true"
-			    	:view-mode=2
-			        :auto-crop-area="0.5"
-			        :min-container-width=250
-			        :min-container-height=180
-			        :background=true
-			        :img="imageUrl"
-			        alt="图片预览"
-			        v-if="imageUrl"
-			        class="avatar"></vue-cropper> 
-			  <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-			  <div v-else class='uploadarea'>
-			  	<i  class="el-icon-plus avatar-uploader-icon "></i>
-			  	<input type="file" class='up_input' @change='toChooseImg($event)' accept="image/jpeg,image/jpg,image/png">
-			  </div>
-			  
-			  <div class='handleImg'>
-			  	<i class="icon iconfont icon-xuanzhuan icon-my-xuanzhuan" @click='rotateLeft'></i>
-			  	<i class='icon iconfont icon-youxuanzhuan icon-my-xuanzhuan' @click='rotateRight'></i>
-			  </div>
+			<div class='preImg'>
+				<vue-cropper
+				    	ref='cropper'
+				    	:guides="true"
+				    	:view-mode=2
+				        :auto-crop-area="0.5"
+				        :min-container-width=250
+				        :min-container-height=180
+				        
+				        :background=true
+				        :img="imageUrl"
+				        alt="图片预览"
+
+				        :autoCrop='true'  
+				        v-if="imageUrl"
+				        class="avatar"></vue-cropper> 
+				  <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+				  <div v-else class='uploadarea'>
+				  	<i  class="el-icon-plus avatar-uploader-icon "></i>
+				  	<input type="file" class='up_input' @change='toChooseImg($event)' accept="image/jpeg,image/jpg,image/png">
+				  	
+				  </div>
+				  <div class='handleImg'>
+				  	<i class="icon iconfont icon-xuanzhuan icon-my-xuanzhuan" @click='rotateLeft'></i>
+				  	<el-button type="text" >重选</el-button>
+				  	<i class='icon iconfont icon-youxuanzhuan icon-my-xuanzhuan' @click='rotateRight'></i>
+				  </div>
+			</div>  
 			  
 			
 			
@@ -95,12 +100,14 @@
 				//获取到当前选择的图片
 				var file = e.target.files[0];
 				if(file){
+
 					let reader = new FileReader();
 					let that = this;
+					//图片转为base64
                 	reader.readAsDataURL(file)
                 	reader.onload= function(e){
                     // 这里的this 指向reader
-                    // that.avatar = this.result
+                    that.imageUrl = this.result
                 	}
 				}
 			},
@@ -193,6 +200,11 @@
 			justify-content:center;
 			align-items:center;
 		}
+		.preImg{
+			display: flex;
+			flex-direction: column;
+			position: relative;
+		}
 		.curImg{
 			.imgPre{
 				width: 6.5rem;
@@ -265,7 +277,9 @@
 			border: 1px dashed #d9d9d9;
     		border-radius: 6px;
     		box-sizing: border-box;
-			.up_input{
+			
+		}
+		.up_input{
 				position: absolute;
 				top:0;
 				left: 0;
@@ -274,6 +288,5 @@
 				z-index:9;
 				opacity: 0;
 			}
-		}
 	}
 </style>
