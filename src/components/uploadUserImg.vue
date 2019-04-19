@@ -10,38 +10,38 @@
 				        :auto-crop-area="0.5"
 				        :min-container-width=250
 				        :min-container-height=180
-				        
+				        :autoCrop=true
 				        :background=true
 				        :img="imageUrl"
 				        alt="图片预览"
 
-				        :autoCrop='true'  
 				        v-if="imageUrl"
 				        class="avatar"></vue-cropper> 
 				  <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
 				  <div v-else class='uploadarea'>
 				  	<i  class="el-icon-plus avatar-uploader-icon "></i>
 				  	<input type="file" class='up_input' @change='toChooseImg($event)' accept="image/jpeg,image/jpg,image/png">
-				  	
 				  </div>
 				  <div class='handleImg'>
-				  	<i class="icon iconfont icon-xuanzhuan icon-my-xuanzhuan" @click='rotateLeft'></i>
-				  	<el-button type="text" >重选</el-button>
-				  	<i class='icon iconfont icon-youxuanzhuan icon-my-xuanzhuan' @click='rotateRight'></i>
+				  	<div class='handBtn'>
+				  		<i class="iconfont icon-xuanzhuan icon-my-xuanzhuan" @click='rotateLeft'></i>
+				  		<span>左旋转</span>
+				  	</div>
+				  	<div class='handBtn'>
+				  		<i class='iconfont icon-youxuanzhuan icon-my-xuanzhuan' @click='rotateRight'></i>
+				  		<span>右旋转</span>
+				  	</div>
+				  	<div class='handBtn'>
+				  		<i class="iconfont icon-zhongxinfenxi" ></i>
+				  		<input type="file" class='up_input' @change='toChooseImg($event)' accept="image/jpeg,image/jpg,image/png">
+				  		<span>重选</span>
+				  	</div>
+				  	<div class='handBtn'>
+				  		<i class='iconfont icon-queren1' @click='toPreview'></i>
+				  		<span>确认</span>
+				  	</div>
 				  </div>
 			</div>  
-			  
-			
-			
-			<!-- <el-upload
-				  class="avatar-uploader"
-				  action="https://jsonplaceholder.typicode.com/posts/"
-				  :show-file-list="false"
-				  :on-success="handleAvatarSuccess"
-				  :before-upload="beforeAvatarUpload">
-				  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-				  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-			</el-upload> -->
 			<div class="mid-line"></div>
 			<div class='curImg'>
 				<!-- <img :src="curUrl" alt="头像预览" v-if='curUrl' class='imgPre'> -->
@@ -53,7 +53,7 @@
 		</div>
 		<p>请选择图片上传：大小180 * 180像素支持JPG、PNG等格式，图片需小于2M</p>
 		<div class='upload-btom'>
-			<el-button class='big-btn' @click='toChange'>更新</el-button>
+			<el-button class='big-btn' @click='toSubmit'>更新</el-button>
 		</div>
 	</div>
 </template>
@@ -83,8 +83,36 @@
 			})
 		},
 		methods:{
-			changeImage(event){
-				console.log(event);
+			//确认更新
+			toSubmit(){
+				console.log(this.curFile);
+				var newFile = this.dataURLtoFile(this.newImg,this.curFile.name)
+				console.log(newFile)
+				this.param = new FormData();
+                this.param.append('file', newFile);
+                this.param.append('id',this.$store.getters.userMsg.id);
+                this.$axios.post('personal/changeBaseInfo',this.param).then(res =>{
+					console.log(res);
+					this.handleSuccess(res.data);
+				})
+			},
+			//base64转文件
+			dataURLtoFile(dataurl, filename) {//将base64转换为文件
+			    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+			    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+			    while(n--){
+			        u8arr[n] = bstr.charCodeAt(n);
+			    }
+			    return new File([u8arr], filename, {type:mime});
+			},
+			//修剪完成，去预览
+			toPreview(){
+
+				this.$refs.cropper.getCropData((data) =>{
+					this.isOldImg = false;
+			        this.newImg = data;
+			        this.rightSta = '预览头像'
+				})
 			},
 			//左旋转
 			rotateLeft(){
@@ -96,23 +124,47 @@
 			},
 			//打开文件选择
 			toChooseImg(e){
-				console.log(e);
 				//获取到当前选择的图片
 				var file = e.target.files[0];
-				if(file){
-
+				this.curFile = file;
+				var check = this.checkImgType(file.type,file.size,file.name)
+				console.log(check)
+				if(file && check){
 					let reader = new FileReader();
 					let that = this;
 					//图片转为base64
                 	reader.readAsDataURL(file)
                 	reader.onload= function(e){
-                    // 这里的this 指向reader
-                    that.imageUrl = this.result
+                    	// 这里的this 指向reader
+                    	that.imageUrl = this.result
                 	}
 				}
 			},
+			//图片格式校验
+			checkImgType(fileType,fileSize,fileName){
+				if(fileType){
+		        	var isImg = fileType === 'image/jpeg' ||  fileType === 'image/png' || fileType === 'image/jpg';
+		        }else{
+		        	//如果图片名后面有带图片类型的后缀
+		        	var index = fileName.lastIndexOf('.');//查找最后一次出现的下标，找不到返回-1
+		        	if(index != -1){
+		        		const tempType = fileName.substr(index+1);//截取字符串，没有length参数会截取到字符串末尾
+		        		var isImg = tempType === 'jpeg' ||  tempType === 'png' || tempType === 'jpg';
+		        	}
+		        }
+		        const isLt2M = fileSize / 1024 / 1024 < 2;
+		        if (!isImg) {
+		          this.$message.error('上传头像图片类型只能是jpeg,png,jpg!');
+		        }else{
+		        	if (!isLt2M) {
+			          this.$message.error('上传头像图片大小不能超过 2MB!');
+			        }
+		        }
+		        return isImg&&isLt2M
+			},
 			//上传成功处理
 			handleSuccess(res){
+				this.imageUrl = '';
 				var _this = this;
 				//如果上传成功，提示，并修改当前头像
 				if(res.status === 'success'){
@@ -122,59 +174,15 @@
 					this.$store.commit('setUserMsg',curMsg)
 					this.$message.success('修改成功！')
 				}else{
-					this.$message.success('修改成功！')
+					this.$message.success(res)
 				}
 				this.$refs.upload.clearFiles();
 				this.imageUrl = '';
 				console.log(this.$refs.upload )
 				this.isClear = false;
 			},
-			//确认更新头像
-			toChange(){
-				
-				this.$axios.post('personal/changeBaseInfo',this.param).then(res =>{
-					console.log(res);
-					this.handleSuccess(res.data);
-				})
-			},
-		    beforeAvatarUpload(file) {
-		    	alert('aaa');
-		    	if(this.isClear){
-		    		this.imageUrl = URL.createObjectURL(file.raw);
-			        //选择图片成功，右边变成头像预览，头像地址和rightSta需要改变
-			        if(this.imageUrl){
-			        	this.isOldImg = false;
-			        	this.newImg = this.imageUrl;
-			        	this.rightSta = '预览头像'
-			        }
-			        //如果图片类型存在
-			        if(file.type){
-			        	var isImg = file.type === 'image/jpeg' ||  file.type === 'image/png' || file.type === 'image/jpg';
-			        }else{
-			        	//如果图片名后面有带图片类型的后缀
-			        	var index = file.name.lastIndexOf('.');//查找最后一次出现的下标，找不到返回-1
-			        	if(index != -1){
-			        		const tempType = file.name.substr(index+1);//截取字符串，没有length参数会截取到字符串末尾
-			        		var isImg = tempType === 'jpeg' ||  tempType === 'png' || tempType === 'jpg';
-			        	}
-			        }
-			        const isLt2M = file.size / 1024 / 1024 < 2;
-			        if (!isImg) {
-			          this.$message.error('上传头像图片类型只能是jpeg,png,jpg!');
-			        }
-			        if (!isLt2M) {
-			          this.$message.error('上传头像图片大小不能超过 2MB!');
-			        }
-			        //重新写一个表单上传的方法
-	                this.param = new FormData();
-	                this.param.append('file', file.raw, file.name);
-	                this.param.append('id',this.$store.getters.userMsg.id);
-			        return isLt2M && isImg ;
-		    	}
-		    	this.isClear = true;
-		     
-				
-		    },		    
+			
+		    	    
 		}
 	}
 </script>
@@ -216,7 +224,7 @@
 		}
 		.mid-line{
 			width: 1px;
-			height: 148px;
+			height: 280px;
 			background: #228B22;
 			margin:0 3rem;
 		}
@@ -242,18 +250,11 @@
 		    z-index: 1;
 		}
 		.avatar {
-		    width: 148px;
-		    height: 148px;
+		    width: 200px;
+		    height: 200px;
 		    display: block;
 		}
-		.el-upload-dragger{
-			width: 148px;
-		    height: 148px;
-		    // overflow: auto;
-		}
-		.el-upload-dragger:hover {
-		    border-color: #228B22;
-		}
+		
 		.big-btn{
 			width: 9rem;
 			height: 40px;
@@ -263,6 +264,17 @@
 		}
 		.handleImg{
 			margin-top: 10px;
+			display: flex;
+			justify-content: space-between;
+			.handBtn{
+				display: flex;
+				flex-direction:column;
+				position: relative;
+				span{
+					margin-top: 10px;
+					color:#333;
+				}
+			}
 		}
 		.icon-my-xuanzhuan{
 			font-size: 30px;
@@ -288,5 +300,6 @@
 				z-index:9;
 				opacity: 0;
 			}
+		
 	}
 </style>

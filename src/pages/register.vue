@@ -9,11 +9,11 @@
 				<div class='main-content'>
 					<div v-if='isPhoneRe'>
 						<div class='register-input'>
-							<el-input placeholder='账号' style='width: 100%;' v-model='username' @blur='checkCodeRepeat(1,username)'></el-input>
+							<el-input placeholder='账号' style='width: 100%;' v-model='username' @blur='checkCodeRepeat("isAccount",username)'></el-input>
 							<p class='register-tips'>{{usernameTips}}</p>
 						</div>
 						<div class='register-input'>
-							<el-input placeholder='密码（6-16个字符组成，区分大小写）' style='width: 100%;' v-model='temppassword' type='password' @blur='toCheackPassword(password)'></el-input>
+							<el-input placeholder='密码（6-16个字符组成，区分大小写）' style='width: 100%;' v-model='temppassword' type='password' @blur='toCheackPassword(temppassword)'></el-input>
 							<div class='register-tips'>
 								<span>{{passwordTips}}</span>
 								<el-progress :percentage="flagProgress" status="success" v-if='passwordTips === "安全系数"'></el-progress>
@@ -21,7 +21,7 @@
 							</div>
 						</div>
 						<div class='register-input'>
-							<el-input placeholder='填写常用手机号' style='width: 100%;' v-model='phone' @blur='checkCodeRepeat(2,phone)'></el-input>
+							<el-input placeholder='填写常用手机号' style='width: 100%;' v-model='phone' @blur='checkCodeRepeat("isPhone",phone)'></el-input>
 							<p class='register-tips'>{{phoneTips}}</p>
 						</div>
 						<div class='register-input'>
@@ -33,7 +33,7 @@
 					</div>
 					<div v-else>
 						<div class='register-input'>
-							<el-input placeholder='账号' style='width: 100%;' v-model='username' @blur='checkCodeRepeat(1,username)'></el-input>
+							<el-input placeholder='账号' style='width: 100%;' v-model='username' @blur='checkCodeRepeat("isAccount",username)'></el-input>
 							<p class='register-tips'>{{usernameTips}}</p>
 						</div>
 						<div class='register-input'>
@@ -45,7 +45,7 @@
 							</div>
 						</div>
 						<div class='register-input'>
-							<el-input placeholder='填写常用邮箱' style='width: 100%;' v-model='myEmail' autocomplete='on' @blur='checkCodeRepeat(3,myEmail)'></el-input>
+							<el-input placeholder='填写常用邮箱' style='width: 100%;' v-model='myEmail' autocomplete='on' @blur='checkCodeRepeat("isEmail",myEmail)'></el-input>
 							<p class='register-tips'>{{emailTips}}</p>
 						</div>
 						<div class='register-input'>
@@ -69,6 +69,7 @@
 </template>
 <script>
 	import sliderValide from '@/components/slider.vue'
+	import validate from '../components/validateMethods.js'
 
 	export default{
 		name:'register',
@@ -125,7 +126,10 @@
 		},
 		computed:{
 			password:function(){
-				return this.$md5(this.temppassword);
+				if(this.temppassword != ''){
+					return this.$md5(this.temppassword);
+				}
+				
 			}
 		},
 		methods:{
@@ -165,41 +169,15 @@
 			//对当前输入信息的格式校验
 			toCheackMsgType(sta,msg){
             	var flag = true;
-				switch(sta){
-					case 1:{
-						var regName = /^[A-Za-z0-9]+$/;
-		        		if(this.username == ''){
-		        			this.usernameTips = '请告诉我你的账号吧';
-		        			flag = false;
-		        		}else if( !regName.test(msg)){
-		        			this.usernameTips = '账号只能由数字或大小写字母组成哦';
-		        			flag = false;
-		        		};
-		        		break;
-					};
-					case 2:{
-						var reg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
-						if(this.phone == ''){
-							this.phoneTips = '请输入手机号';
-							flag = false;
-						}else if(!reg.test(msg)){
-							this.phoneTips = '请输入正确的手机号码哟';
-							flag = false;
-						};
-						break;
-					};
-					case 3:{
-						var reg= /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
-						if(msg == ''){
-							this.emailTips = '请输入邮箱号';
-							flag = false;
-						}else if(!reg.test(msg)){
-							this.emailTips = '邮箱格式不正确';
-							flag = false;
-						}
-						break;
+            	var cheackResult = validate[sta](msg);
+            	if(cheackResult !== true){
+					flag = false;
+					switch(sta){
+						case 'isAccount':this.usernameTips = cheackResult;break;
+						case 'isPhone':this.phoneTips = cheackResult;break;
+						case 'isEmail':this.emailTips = cheackResult;break;
 					}
-				};
+				}
 				return flag;
 
 			},
@@ -208,14 +186,18 @@
 				//没有被占用才能调用
 				if(this.isAvaliable){
 					this.$axios.post('/user/getEmailCode',{email:val})
-							.then(response =>{
-								console.log(response);
-							})
+						.then(response =>{
+							console.log(response);
+						})
 				}
 			},
 			//邮箱注册
 			toEmail(){
+
 				this.isPhoneRe = !this.isPhoneRe;
+				this.phoneTips = '';
+				this.emailTips  = '';
+				this.usernameTips = '';
 			},
 			//去登陆页面
 			toLogin(){
@@ -237,11 +219,9 @@
 			},
 			//获取动态校验码
 			toGetCheckWord(phone){
-				var reg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
-				if(phone === ''){
-					this.phoneTips = '手机号不能为空';
-				}else if(!reg.test(phone)){
-					this.phoneTips = '请输入正确的手机号码哟'
+				var cheackResult = validate[sta](msg);
+            	if(cheackResult !== true){
+					this.phoneTips = cheackResult
 				}else{
 					this.getotp()
 				}
@@ -264,31 +244,17 @@
 			},
 			//密码复杂度校验
 			toCheackPassword(val){
-				var reg1 = /([0-9 | a-z | A-Z]+)/;//纯数字或纯字母，低
-				var reg2 = new RegExp('(?=.*[0-9])(?=.*[a-zA-Z]).{6,30}');//字母和数字，中
-				var reg3 =  new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{6,30}');//同时包含大小写字母和数字、特殊符号，高
-				var falg = '';
-				//如果为空不显示校验结果
-				if(val === ''){
-					this.passwordTips = '';
-					this.flagProgress = 0;
-					this.tipsFlag = '';
+				console.log(val);
+				var cheackResult = validate.checkPassword(val);
+				console.log(typeof cheackResult);
+				if(typeof cheackResult === String){
+					this.$message.warning(cheackResult)
 				}else{
-					if(reg1.test(val)){
-						falg = '低';
-						this.flagProgress = 35;
-					}
-					if(reg2.test(val)){
-						falg = '中';
-						this.flagProgress = 65;
-					}
-					if(reg3.test(val)){
-						falg = '高';
-						this.flagProgress = 100;
-					}
+					console.log(cheackResult)
 					this.passwordTips = '安全系数';
-					this.tipsFlag = falg;
-				}				
+					this.tipsFlag = cheackResult[0];
+					this.flagProgress = cheackResult[1];
+				}
 			},
 
 			//注册
@@ -298,15 +264,17 @@
             	//判断当前是手机注册还是邮箱注册
 				var tempParams = {'usercode':this.username,'password':this.password,'otpCode':this.dynamicWord};
 				if(this.isPhoneRe){
-					if(this.phone == ''){
-						this.phoneTips = '请输入手机号';
+					let cheackResult = validate.isPhone(this.phone);
+					if(cheackResult !== true){
+						this.phoneTips = cheackResult;
 						flag = false;
 					}else{
 						tempParams.telephone = this.phone;
 					}
 				}else{
-					if(this.myEmail == ''){
-						this.emailTips = '请输入邮箱号';
+					let cheackResult = validate.isEmail(this.phone);
+					if(cheackResult !== true){
+						this.emailTips = cheackResult;
 						flag = false;
 					}else{
 						tempParams.email = this.myEmail;

@@ -15,7 +15,7 @@
 				
 				<div class='reset-input'>
 					<label for="confirmPassword">确认密码</label>
-					<el-input id='confirmPassword' placeholder='请确认输入的新密码' v-model='tempconfirmPassword' @blur='checkPassword(newPassword,confirmPassword)' type='password'></el-input>
+					<el-input id='confirmPassword' placeholder='请确认输入的新密码' v-model='tempconfirmPassword' type='password'></el-input>
 					<p class='reset-tips'>{{confirmTips}}</p>
 				</div>
 				<el-button class='reset-btn' @click='resetSure' :disabled='linkIsAvalible'>确定</el-button>
@@ -26,6 +26,8 @@
 	</div>
 </template>
 <script>
+	import validate from '../components/validateMethods.js'
+
 	export default{
 		name:'resetPassword',
 		data(){
@@ -108,41 +110,40 @@
 				}
 				
 			},
-			//两次密码校验是否一致
-			checkPassword(val1,val2){
-				if(val1 != val2 && val1!=''){
-					this.confirmTips = '两次输入不一致，检查一下哦'
-				}
-				if(val2 === ''){
-					this.confirmTips = '';
-				}
-			},
+			
 			//确定修改密码
 			resetSure(){
-				if(this.isByEmail){
-					this.$axios.post('/user/mailUpdatePassword',{sid:this.sid,email:this.email,password:this.confirmPassword})
-						.then(response =>{
-							console.log(response);
-							if(response.data.status === 'success'){
-								this.$message.success(response.data.data);
-								this.$router.push('/');
-							}else{
-								this.$message.error(response.data.data.errMsg);
-							}
-					})
+				//两次密码校验是否一致
+				let cheackResult = validate.checkIsEquel(this.newPassword,this.confirmPassword)
+				if(cheackResult != true){
+					this.confirmTips = cheackResult
 				}else{
-					var otpcode = sessionStorage.getItem('otpCode');
-					this.$axios.post('/user/telephonePasswordReminderCheck',{'telephone':this.email,'otpCode':otpcode,'password':this.confirmPassword})
-						.then(response=>{
-							console.log(response);
-							if(response.data.status === 'success'){
-								this.$message.success(response.data.data);
-								this.$router.push('/');
-							}else{
-								this.$message.error(response.data.data);
-							}
+					if(this.isByEmail){
+						this.$axios.post('/user/mailUpdatePassword',{sid:this.sid,email:this.email,password:this.confirmPassword})
+							.then(response =>{
+								console.log(response);
+								if(response.data.status === 'success'){
+									this.$message.success(response.data.data);
+									this.$router.push('/');
+								}else{
+									this.$message.error(response.data.data.errMsg);
+								}
 						})
+					}else{
+						var otpcode = sessionStorage.getItem('otpCode');
+						this.$axios.post('/user/telephonePasswordReminderCheck',{'telephone':this.email,'otpCode':otpcode,'password':this.confirmPassword})
+							.then(response=>{
+								console.log(response);
+								if(response.data.status === 'success'){
+									this.$message.success(response.data.data);
+									this.$router.push('/');
+								}else{
+									this.$message.error(response.data.data);
+								}
+							})
+					}
 				}
+				
 				
 			}
 		}

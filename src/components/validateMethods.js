@@ -10,10 +10,10 @@ function isPhone(val){
 	}
 }
 //邮箱校验
-function isEmail(){
+function isEmail(val){
 	var tips = '';
 	var reg= /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
-	if(val == ''){
+	if(val == '' || val === undefined){
 		return '请输入邮箱号';
 	}else if(!reg.test(val)){
 		return '邮箱格式不正确';
@@ -34,44 +34,47 @@ function isAccount(val){
 }
 //密码复杂度校验
 function checkPassword(val){
-	var reg1 = /([0-9 | a-z | A-Z]+)/;//纯数字或纯字母，低
-	var reg2 = new RegExp('(?=.*[0-9])(?=.*[a-zA-Z]).{6,30}');//字母和数字，中
-	var reg3 =  new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{6,30}');//同时包含大小写字母和数字、特殊符号，高
-	var falg = '';//文字提示
-	var passwordTips = '';//程度提示
-	var flagProgress = 0;//程度进度条
-	//如果为空不显示校验结果
-	if(val === ''){
-		passwordTips = '';
-		flagProgress = 0;
-		flag = '';
+	if(val=='' || val==undefined){
+		return '密码不能为空'
 	}else{
-		if(reg1.test(val)){
-			falg = '低';
-			flagProgress = 35;
+		var reg1 = /([0-9 | a-z | A-Z]+)/;//纯数字或纯字母，低
+		var reg2 = new RegExp('(?=.*[0-9])(?=.*[a-zA-Z]).{6,30}');//字母和数字，中
+		var reg3 =  new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{6,30}');//同时包含大小写字母和数字、特殊符号，高
+		var falg = '';//文字提示
+		var flagProgress = 0;//程度进度条
+		//如果为空不显示校验结果
+		if(val === ''){
+			passwordTips = '';
+			flagProgress = 0;
+			flag = '';
+		}else{
+			if(reg1.test(val)){
+				falg = '低';
+				flagProgress = 35;
+			}
+			if(reg2.test(val)){
+				falg = '中';
+				flagProgress = 65;
+			}
+			if(reg3.test(val)){
+				falg = '高';
+				flagProgress = 100;
+			}
+			
 		}
-		if(reg2.test(val)){
-			falg = '中';
-			flagProgress = 65;
-		}
-		if(reg3.test(val)){
-			falg = '高';
-			flagProgress = 100;
-		}
-		passwordTips = '安全系数';
+		return [falg,flagProgress]
 	}
-	return [falg,passwordTips,flagProgress]
+	
 }
 //两次输入是否一致
 function checkIsEquel(val1,val2){
-	var tips = '';
-	if(val1 != val2 && val1!=''){
-		tips = '两次输入不一致，检查一下哦'
+	if(val1 != val2 && val1!='' && val2!=''){
+		return '两次输入不一致，检查一下哦'
+	}else{
+		return true
 	}
-	if(val2 === ''){
-		tips = '';
-	}
-	return tips
+	
+	
 }
 //暴露方法
 export default{

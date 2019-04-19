@@ -99,7 +99,7 @@
 </template>
 <script>
 	import sliderValide from '@/components/slider.vue'
-
+	import validate from '../components/validateMethods.js'
 	export default{
 		name:'login',
 		components:{
@@ -154,12 +154,9 @@
 			//找回密码
 			tofindPassword(){
 				if(this.isfindByEmail){
-					//如果是通过邮箱找回
-					var reg= /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/; 
-					if(this.emailByForgive === '' || this.emailByForgive === undefined){
-						this.emailTips ='邮箱地址不能为空哦'
-					}else if(!reg.test(this.emailByForgive)){
-						this.emailTips ='邮箱格式不对哦'
+					var cheackResult = validate.isEmail(this.emailByForgive);
+					if(cheackResult !== true){
+						this.$message.warning(cheackResult)
 					}else{
 						this.emailTips = '';
 						this.$axios.post('/user/mailPasswordReminderSend',{emailAdd:this.emailByForgive})
@@ -221,19 +218,26 @@
 			},
 			//获取动态校验码
 			toGetCheckWord(type){
-				this.timeCount1s(10);
-				this.MsgBtnDisable = true;
-				var methods = type == 'forget' ? '/user/telephonePasswordReminderSend' :'';
-				this.$axios.post(methods,{'telephone':this.phoneByForgive})
-					.then(response =>{
-						console.log(response)
-						if(response.data.status === 'success'){
-							this.fogivephonewordTips = response.data.data;
+				//手机号码校验
+				var cheackResult = validate.isPhone(this.phoneByForgive);
+				if(cheackResult !== true){
+					this.$message.warning(cheackResult)
+				}else{
+					this.timeCount1s(10);
+					this.MsgBtnDisable = true;
+					var methods = type == 'forget' ? '/user/telephonePasswordReminderSend' :'';
+					this.$axios.post(methods,{'telephone':this.phoneByForgive})
+						.then(response =>{
+							console.log(response)
+							if(response.data.status === 'success'){
+								this.fogivephonewordTips = response.data.data;
 
-						}else{
-							this.fogivephonewordTips = response.data.data.errMsg;
-						}
-					})
+							}else{
+								this.fogivephonewordTips = response.data.data.errMsg;
+							}
+						})
+				}
+				
 			},
 			//登陆方式切换
 			changeType(){
@@ -247,8 +251,6 @@
 			//登陆
             toLogin(val){
             	console.log(this.password);
-            	var qs = require('qs');
-
         		if(this.phone == ''){
         			this.phoneTips = '请输入注册时用的邮箱或者手机号呀'
         		}
