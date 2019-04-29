@@ -40,9 +40,10 @@
 		},
 		watch:{
 			tabValue(oldval,newval){
-				if(oldval != newval){
-					this.capture();
-				}
+				console.log(oldval,newval);
+				// if(oldval != newval){
+				// 	this.capture();
+				// }
 			}
 		},
 		computed:{
@@ -55,23 +56,32 @@
 		methods:{
 			//跳转到标签管理页面
 			toTagManage(){
-				this.$router.push('/tagManage')
+				console.log(this.tabValue)
+				if(this.tabValue){
+					this.capture();
+				}
+				this.$nextTick(()=>{
+					this.$router.push('/tagManage')
+				})
+				
 			},
 			//标签页截图
 			capture(){
 				if(this.$refs.tabContent.offsetWidth){
 					var tabWidth = this.$refs.tabContent.offsetWidth;
+					var tabHeight = this.$refs.tabContent.clientHeight
 				}else{
 					var tabWidth  = 300;
+					var tabHeight = 200;
 				}
 				
-				var imgWidth = (tabWidth - 80) / 3;//压缩的图片宽度计算
-				var imgHeight= 200;//压缩图片的高度固定为200px
+				// var imgWidth = (tabWidth - 80) / 3;//压缩的图片宽度计算
+				// var imgHeight= tabHeight;//压缩图片的高度固定为200px
 				//tabValue是content，所以要根据content拿到tabsList的名字
 				var tempIndex = this.tabsList.findIndex( value =>value.content == this.tabValue)
 				if(tempIndex != -1){
 					var currentName = this.tabsList[tempIndex].name
-					html2canvas(document.querySelector("#capture"),{width:imgWidth,height:200}).then(canvas => {
+					html2canvas(document.querySelector("#capture"),{width:tabWidth,height:tabHeight}).then(canvas => {
 						
 						var imgSrc = canvas.toDataURL("image/png");
 	                    this.$store.commit('add_thumbnail',{canvas:imgSrc,name:currentName})
