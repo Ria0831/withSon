@@ -53,7 +53,7 @@
 		</div>
 		<p>请选择图片上传：大小180 * 180像素支持JPG、PNG等格式，图片需小于2M</p>
 		<div class='upload-btom'>
-			<el-button class='big-btn' @click='toSubmit'>更新</el-button>
+			<el-button class='big-btn' @click='toSubmit' :disabled='canUpgrad'>更新</el-button>
 		</div>
 	</div>
 </template>
@@ -74,6 +74,7 @@
 				uploadSta:false,
 				curFile:'',
 				param:'',
+				canUpgrad:true,
 				isClear:true,//控制beforeAvatarUpload方法的执行，因为on-change添加文件、上传成功和上传失败时都会被调用
 			}
 		},
@@ -86,15 +87,21 @@
 			//确认更新
 			toSubmit(){
 				console.log(this.curFile);
+				
+
 				var newFile = this.dataURLtoFile(this.newImg,this.curFile.name)
 				console.log(newFile)
 				this.param = new FormData();
+				this.param.append('userPreIcon',this.curUrl);
                 this.param.append('file', newFile);
                 this.param.append('id',this.$store.getters.userMsg.id);
+                console.log(this.param);
                 this.$axios.post('personal/changeBaseInfo',this.param).then(res =>{
 					console.log(res);
 					this.handleSuccess(res.data);
 				})
+				
+				
 			},
 			//base64转文件
 			dataURLtoFile(dataurl, filename) {//将base64转换为文件
@@ -107,7 +114,7 @@
 			},
 			//修剪完成，去预览
 			toPreview(){
-
+				this.canUpgrad = false;
 				this.$refs.cropper.getCropData((data) =>{
 					this.isOldImg = false;
 			        this.newImg = data;
@@ -164,7 +171,7 @@
 			},
 			//上传成功处理
 			handleSuccess(res){
-				this.imageUrl = '';
+				
 				var _this = this;
 				//如果上传成功，提示，并修改当前头像
 				if(res.status === 'success'){
@@ -174,11 +181,13 @@
 					this.$store.commit('setUserMsg',curMsg)
 					this.$message.success('修改成功！')
 				}else{
-					this.$message.success(res)
+					//失败，预览头像还是显示原先的头像，左边选择框清空
+					this.isOldImg = true;
+					this.$message.error(res.data)
 				}
-				this.$refs.upload.clearFiles();
+				// this.$refs.upload.clearFiles();
 				this.imageUrl = '';
-				console.log(this.$refs.upload )
+				// console.log(this.$refs.upload )
 				this.isClear = false;
 			},
 			
