@@ -88,6 +88,7 @@
 			toSubmit(){
 				var newFile = this.dataURLtoFile(this.newImg,this.curFile.name)
 				console.log(newFile)
+				console.log('whyyyyyyy')
 				this.param = new FormData();
 				this.param.append('userPreIcon',this.curUrl);
                 this.param.append('file', newFile);
