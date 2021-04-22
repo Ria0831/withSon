@@ -86,9 +86,6 @@
 		methods:{
 			//确认更新
 			toSubmit(){
-				console.log(this.curFile);
-				
-
 				var newFile = this.dataURLtoFile(this.newImg,this.curFile.name)
 				console.log(newFile)
 				this.param = new FormData();
