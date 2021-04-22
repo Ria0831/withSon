@@ -86,7 +86,7 @@
 		methods:{
 			//确认更新
 			toSubmit(){
-				console.log(this.curFile);
+				console.log(this.curFile,'ahahah');
 				
 
 				var newFile = this.dataURLtoFile(this.newImg,this.curFile.name)
